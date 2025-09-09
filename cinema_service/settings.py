@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from pathlib import Path
+import sys
 import importlib.util
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -74,6 +75,18 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
+
+RUNNING_TESTS = "test" in sys.argv
+DEBUG_TOOLBAR_AVAILABLE = importlib.util.find_spec("debug_toolbar") is not None
+
+if DEBUG and not RUNNING_TESTS and DEBUG_TOOLBAR_AVAILABLE:
+    INSTALLED_APPS.append("debug_toolbar")
+    MIDDLEWARE.insert(1, "debug_toolbar.middleware.DebugToolbarMiddleware")
 
 ROOT_URLCONF = "cinema_service.urls"
 
