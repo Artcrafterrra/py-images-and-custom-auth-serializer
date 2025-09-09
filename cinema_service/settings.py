@@ -17,8 +17,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 try:
     from django.http import multipartparser as _mp  # type: ignore
+
     if not hasattr(_mp, "parse_header"):
-        from cgi import parse_header as _cgi_parse_header  # deprecated, але працює як шім
+        from cgi import (
+            parse_header as _cgi_parse_header,
+        )  # deprecated, але працює як шім
 
         def _compat_parse_header(line):
             value, params = _cgi_parse_header(line)
