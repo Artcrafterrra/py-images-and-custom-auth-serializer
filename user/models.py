@@ -1,10 +1,9 @@
-from django.contrib.auth.models import AbstractUser
-from django.contrib.auth.base_user import BaseUserManager
+from django.contrib.auth.models import AbstractUser, UserManager as DjangoUserManager
 from django.db import models
 from django.utils.translation import gettext as _
 
 
-class UserManager(BaseUserManager):
+class UserManager(DjangoUserManager):
     use_in_migrations = True
 
     def _create_user(self, email, password, **extra_fields):
