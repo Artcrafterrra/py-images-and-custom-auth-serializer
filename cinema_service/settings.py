@@ -15,6 +15,19 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+try:
+    from django.http import multipartparser as _mp  # type: ignore
+    if not hasattr(_mp, "parse_header"):
+        from cgi import parse_header as _cgi_parse_header  # deprecated, але працює як шім
+
+        def _compat_parse_header(line):
+            value, params = _cgi_parse_header(line)
+            return value, params
+
+        _mp.parse_header = _compat_parse_header  # type: ignore[attr-defined]
+except Exception:
+    pass
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
@@ -138,6 +151,17 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 MEDIA_ROOT = BASE_DIR / "media"
 MEDIA_URL = "/media/"
+
+try:
+    import debug_toolbar  # noqa: F401
+except Exception:
+    DEBUG_TOOLBAR_AVAILABLE = False
+else:
+    DEBUG_TOOLBAR_AVAILABLE = True
+
+if DEBUG_TOOLBAR_AVAILABLE:
+    INSTALLED_APPS.append("debug_toolbar")
+    MIDDLEWARE.insert(1, "debug_toolbar.middleware.DebugToolbarMiddleware")
 
 try:
     import debug_toolbar  # noqa: F401
