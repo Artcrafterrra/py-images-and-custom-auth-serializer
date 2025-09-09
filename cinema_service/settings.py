@@ -11,9 +11,27 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from pathlib import Path
+import sys
+import importlib.util
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+try:
+    from django.http import multipartparser as _mp  # type: ignore
+
+    if not hasattr(_mp, "parse_header"):
+        from cgi import (
+            parse_header as _cgi_parse_header,
+        )  # deprecated, але працює як шім
+
+        def _compat_parse_header(line):
+            value, params = _cgi_parse_header(line)
+            return value, params
+
+        _mp.parse_header = _compat_parse_header  # type: ignore[attr-defined]
+except Exception:
+    pass
 
 
 # Quick-start development settings - unsuitable for production
@@ -44,14 +62,12 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "rest_framework.authtoken",
-    "debug_toolbar",
     "cinema",
     "user",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -59,6 +75,18 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
+
+RUNNING_TESTS = "test" in sys.argv
+DEBUG_TOOLBAR_AVAILABLE = importlib.util.find_spec("debug_toolbar") is not None
+
+if DEBUG and not RUNNING_TESTS and DEBUG_TOOLBAR_AVAILABLE:
+    INSTALLED_APPS.append("debug_toolbar")
+    MIDDLEWARE.insert(1, "debug_toolbar.middleware.DebugToolbarMiddleware")
 
 ROOT_URLCONF = "cinema_service.urls"
 
