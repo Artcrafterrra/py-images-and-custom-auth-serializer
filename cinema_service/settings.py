@@ -149,4 +149,3 @@ else:
 if DEBUG_TOOLBAR_AVAILABLE:
     INSTALLED_APPS.append("debug_toolbar")
     MIDDLEWARE.insert(1, "debug_toolbar.middleware.DebugToolbarMiddleware")
-
