@@ -155,23 +155,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 MEDIA_ROOT = BASE_DIR / "media"
 MEDIA_URL = "/media/"
 
-try:
-    import debug_toolbar  # noqa: F401
-except Exception:
-    DEBUG_TOOLBAR_AVAILABLE = False
-else:
-    DEBUG_TOOLBAR_AVAILABLE = True
-
-if DEBUG_TOOLBAR_AVAILABLE:
-    INSTALLED_APPS.append("debug_toolbar")
-    MIDDLEWARE.insert(1, "debug_toolbar.middleware.DebugToolbarMiddleware")
-
-try:
-    import debug_toolbar  # noqa: F401
-except Exception:
-    DEBUG_TOOLBAR_AVAILABLE = False
-else:
-    DEBUG_TOOLBAR_AVAILABLE = True
+import importlib.util
+DEBUG_TOOLBAR_AVAILABLE = importlib.util.find_spec("debug_toolbar") is not None
 
 if DEBUG_TOOLBAR_AVAILABLE:
     INSTALLED_APPS.append("debug_toolbar")
