@@ -156,7 +156,10 @@ MEDIA_ROOT = BASE_DIR / "media"
 MEDIA_URL = "/media/"
 
 import importlib.util
-DEBUG_TOOLBAR_AVAILABLE = importlib.util.find_spec("debug_toolbar") is not None
+
+DEBUG_TOOLBAR_AVAILABLE = (
+    importlib.util.find_spec("debug_toolbar") is not None
+)
 
 if DEBUG_TOOLBAR_AVAILABLE:
     INSTALLED_APPS.append("debug_toolbar")
